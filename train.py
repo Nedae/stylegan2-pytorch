@@ -238,7 +238,6 @@ def train(args, loader, generator, discriminator, g_optim, d_optim, g_ema, devic
         g_optim.step()
 
         g_regularize = i % args.g_reg_every == 0
-
         if g_regularize:
             path_batch_size = max(1, args.batch // args.path_batch_shrink)
             noise = mixing_noise(path_batch_size, args.latent, args.mixing, device)
@@ -337,10 +336,10 @@ if __name__ == "__main__":
     parser.add_argument("path", type=str, help="path to the lmdb dataset")
     parser.add_argument('--arch', type=str, default='stylegan2', help='model architectures (stylegan2 | swagan)')
     parser.add_argument(
-        "--iter", type=int, default=800000, help="total training iterations"
+        "--iter", type=int, default=125000, help="total training iterations"
     )
     parser.add_argument(
-        "--batch", type=int, default=16, help="batch sizes for each gpus"
+        "--batch", type=int, default=8, help="batch sizes for each gpus"
     )
     parser.add_argument(
         "--n_sample",
@@ -375,7 +374,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--g_reg_every",
         type=int,
-        default=4,
+        default=400000,
         help="interval of the applying path length regularization",
     )
     parser.add_argument(
@@ -429,7 +428,6 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-
     n_gpu = int(os.environ["WORLD_SIZE"]) if "WORLD_SIZE" in os.environ else 1
     args.distributed = n_gpu > 1
 
